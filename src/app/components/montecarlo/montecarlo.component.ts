@@ -1,0 +1,227 @@
+import { Component, OnInit } from '@angular/core';
+import { Chart } from 'chart.js';
+import * as math from 'mathjs';
+import * as _ from 'lodash';
+
+@Component({
+  selector: 'montecarlo',
+  templateUrl: './montecarlo.component.html',
+  styleUrls: ['./montecarlo.component.css']
+})
+export class MontecarloComponent implements OnInit {
+
+  chart: Chart;
+  xPoints = [];
+  yPoints = [];
+  cLine = [];
+
+  lineValuesMap = [];
+
+  aLimit = 0; 
+  bLimit = 0;
+  cLimit = 0;
+  amountOfDots = 0;
+  amountOfPoints = 0;
+
+  totalPoints = 0;
+
+  originalFunctionResult: number;
+  calculatedFunctionResult: number;
+  
+  greenDots = [];
+  redDots = [];
+
+  userFunction: string;
+  mathFunction: any;
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  execute() {
+     //this.originalFunctionResult = this.calculateOriginalResult();
+
+    this.reset();
+    this.findGraphicPoints();
+    this.drawGraph();
+
+    this.calculateIntegralValue();
+  }
+
+  reset() {
+    this.totalPoints = 0;
+    this.cLimit = 0;
+    this.greenDots = [];
+    this.redDots = [];
+    debugger
+    if(this.chart != undefined){
+      this.chart.canvas.destroy();
+      this.chart = undefined;
+    }
+  }
+
+  calculateOriginalResult() {
+    const f = this.parseFunction(this.userFunction);
+
+    const asd = math.integral('x^2', 'x');
+    console.log(math.integrate(asd, 0, 1));
+
+    return 0;
+  }
+
+  findGraphicPoints() {
+    this.mathFunction = this.parseFunction(this.userFunction);
+    for (let i = 0; i <= this.amountOfPoints; i++) {
+      var yValue = this.mathFunction.eval({x: i});
+
+      this.xPoints.push(i);
+      this.yPoints.push(yValue);
+      this.lineValuesMap[i] = yValue;
+    }
+  }
+
+  parseFunction(functionToParse: string) {
+    return math.parse(functionToParse).compile();
+  }
+
+  drawGraph() {
+    var dataset = this.generateDataset();
+
+    this.chart = new Chart('canvas', {
+      type: 'line',
+      data: {
+        labels: this.xPoints,
+        datasets: dataset
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        
+      }
+    });
+  }
+
+  generateDataset() {
+    var dataset = [];
+    var mainDraw = {
+      data: this.yPoints,
+      borderColor: '#0300ff',
+      fill: false
+    };
+
+    dataset.push(mainDraw);
+    dataset.push(this.calculateLimitA());
+    dataset.push(this.calculateLimitB());
+    dataset.push(this.calculateC());
+
+    this.generateRandomDot();
+
+    this.greenDots.forEach(dot => dataset.push(dot));
+    this.redDots.forEach(dot => dataset.push(dot));
+    return dataset;
+  }
+
+  calculateLimitA() {
+    return {
+      label: 'a',
+      data: [
+        {x: this.aLimit, y: 0},
+        {x: this.aLimit, y: this.mathFunction.eval({x:this.aLimit})}
+      ],
+      borderColor: '#00ccba',
+      fill: false,
+      borderDash: [5, 2],
+      borderWidth: 2,
+    };
+  }
+
+  calculateLimitB() {
+    return {
+      label: 'b',
+      data: [
+        {x: this.bLimit, y: 0},
+        {x: this.bLimit, y: this.mathFunction.eval({x:this.bLimit})}
+      ],
+      borderColor: '#00ccba',
+      fill: false,
+      borderDash: [5, 2],
+      borderWidth: 2,
+    };
+  }
+
+  calculateC() {
+    this.calculateLimitC();
+    
+    return {
+      label: 'c',
+      data: [
+        {x: this.aLimit, y: this.cLimit},
+        {x: this.bLimit, y: this.cLimit}
+      ],
+      borderColor: '#ff7700de',
+      fill: false,
+      borderDash: [5, 2],
+      borderWidth: 2,
+    };
+  }
+
+  calculateLimitC(){
+    for (let i = this.aLimit; i <= this.bLimit; i++) {
+      var valueAtPointI = this.mathFunction.eval({x: i});
+      if(valueAtPointI > this.cLimit){
+        this.cLimit = valueAtPointI;
+      }
+    }
+    this.cLimit = this.cLimit * 1.2;
+  }
+
+  generateRandomDot() {
+    for (let i = 0; i <= this.amountOfDots; i++) {
+      var xRandom = _.random(this.aLimit, this.bLimit);
+      var yRandom = _.random(0, this.cLimit);
+      console.log(xRandom)
+      var yValueAtX = this.lineValuesMap[xRandom];
+
+      if(yValueAtX < yRandom) {
+        this.addRedDot(xRandom, yRandom);
+      } else {
+        this.addGreenDot(xRandom, yRandom);
+      }
+
+      this.totalPoints ++;
+    }
+  }
+
+  addGreenDot(xValue: any, yValue: any) {
+    this.greenDots.push({
+      backgroundColor: "#19a000",
+      borderColor: "#19a000",
+      data: [{
+        x: xValue,
+        y: yValue,
+        r: 5,
+      }]
+    });
+  }
+
+  addRedDot(xValue: any, yValue:any) {
+    this.redDots.push( {
+      backgroundColor: "#ff0000",
+      borderColor: "#ff0000",
+      data: [{
+        x: xValue,
+        y: yValue,
+        r: 5,
+      }]
+    });
+  }
+
+  calculateIntegralValue(){
+    var n = this.amountOfDots;
+    var greenDots = this.greenDots.length;
+
+    this.calculatedFunctionResult = (greenDots/n) * (this.bLimit - this.aLimit) * this.cLimit;
+  }
+}
