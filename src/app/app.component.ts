@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
-import * as math from 'mathjs'
+import * as math from 'mathjs';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.maintainAspectRatio = true;
@@ -9,60 +9,65 @@ Chart.defaults.global.maintainAspectRatio = true;
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
-  chart: [];
+export class AppComponent implements OnInit {
+  chart: Chart;
   xPoints = [];
   yPoints = [];
   cLine = [];
 
   a = 0;
   b = 0;
-  amountOfValues= 0;
+  amountOfValues = 0;
 
-  originalFunctionResult: string;
+  originalFunctionResult: number;
   calculatedFunctionResult: number;
   scope = {
     x: 4,
-  }
+  };
 
-  userFunction : string;
-  
+  userFunction: string;
+
   constructor() { }
 
   ngOnInit() {
   }
 
   execute() {
-    let mathFunction = this.parseFunction(this.userFunction);
-    this.originalFunctionResult = 
-   this.originalFunctionResult = '';
+    // this.originalFunctionResult = this.calculateOriginalResult();
+    this.findGraphicPoints();
 
-    for(var i = 0; i <= this.amountOfValues; i++){
+    this.drawGraph(this.xPoints, this.yPoints, this.cLine);
+  }
+
+  calculateOriginalResult() {
+    const integrate = 'integrate(x^2, x, 0, 1)';
+    const asss =  math.eval(integrate);
+
+    return 0;
+  }
+
+  findGraphicPoints() {
+    const mathFunction = this.parseFunction(this.userFunction);
+    for (let i = 0; i <= this.amountOfValues; i++) {
       this.scope.x = i;
-      this.originalFunctionResult += mathFunction.eval(this.scope) + ',';
-
-
-
       this.xPoints.push(i);
       this.yPoints.push(mathFunction.eval(this.scope));
     }
-
-    this.drawGraph(this.xPoints, this.yPoints, this.cLine);
   }
 
   parseFunction(functionToParse: string) {
     return math.parse(functionToParse).compile();
   }
 
-  drawGraph(x: any[], y: any[], c: any[]) { 
+  drawGraph(x: any[], y: any[], c: any[]) {
     this.chart = new Chart('canvas', {
-      type: 'line', 
+      type: 'line',
       data: {
         labels: x,
         datasets: [
-          { 
+          {
             data: y,
-            borderColor: "#0300ff",
+            borderColor: '#0300ff',
             fill: false
           },
         ]
@@ -93,5 +98,6 @@ export class AppComponent implements OnInit{
         }
       }
     });
+    this.chart.Chart.clear();
   }
 }
