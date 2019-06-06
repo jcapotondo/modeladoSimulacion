@@ -11,6 +11,10 @@ import * as _ from 'lodash';
 export class MontecarloComponent implements OnInit {
 
   chart: Chart;
+  evolutionChart: CharacterData;
+  evolutionDataset: any[];
+  evolutionPointsX: any[];
+
   xPoints = [];
   yPoints = [];
   cLine = [];
@@ -45,20 +49,20 @@ export class MontecarloComponent implements OnInit {
     this.reset();
     this.findGraphicPoints();
     this.drawGraph();
+    this.drawEvolutionChart();
 
     this.calculateIntegralValue();
   }
 
   reset() {
+    this.chart = new Chart('canvas', {type: 'line',data:{}});
+    this.evolutionChart = new Chart('evolutionCanvas', {type: 'line',data:{}})
+    this.evolutionDataset = [];
+    this.evolutionPointsX = [];
     this.totalPoints = 0;
     this.cLimit = 0;
     this.greenDots = [];
     this.redDots = [];
-    debugger
-    if(this.chart != undefined){
-      this.chart.canvas.destroy();
-      this.chart = undefined;
-    }
   }
 
   calculateOriginalResult() {
@@ -98,7 +102,6 @@ export class MontecarloComponent implements OnInit {
         legend: {
           display: false
         },
-        
       }
     });
   }
@@ -181,16 +184,13 @@ export class MontecarloComponent implements OnInit {
     for (let i = 0; i <= this.amountOfDots; i++) {
       var xRandom = _.random(this.aLimit, this.bLimit);
       var yRandom = _.random(0, this.cLimit);
-      console.log(xRandom)
+
       var yValueAtX = this.lineValuesMap[xRandom];
 
-      if(yValueAtX < yRandom) {
-        this.addRedDot(xRandom, yRandom);
-      } else {
-        this.addGreenDot(xRandom, yRandom);
-      }
+      (yValueAtX < yRandom) ? this.addRedDot(xRandom, yRandom) : this.addGreenDot(xRandom, yRandom);
 
       this.totalPoints ++;
+      this.generateEvolutionDataset(i);
     }
   }
 
@@ -215,6 +215,36 @@ export class MontecarloComponent implements OnInit {
         y: yValue,
         r: 5,
       }]
+    });
+  }
+
+  generateEvolutionDataset(amountOfValues) {
+    this.calculateIntegralValue();
+    
+    var obj = {
+      label: 'a',
+      data: [
+        {x: amountOfValues, y: this.calculatedFunctionResult},
+      ],
+      borderColor: '#00ccba',
+      fill: false,
+    };
+    this.evolutionDataset.push(obj);
+    this.evolutionPointsX.push(amountOfValues);
+  }
+
+  drawEvolutionChart() {
+    this.evolutionChart = new Chart('evolutionCanvas', {
+      type: 'line',
+      data: {
+        labels: this.evolutionPointsX,
+        datasets: this.evolutionDataset
+      },
+      options: {
+        legend: {
+          display: false
+        },
+      }
     });
   }
 
