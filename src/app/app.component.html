@@ -1,0 +1,40 @@
+<mat-card class="card-container">
+    <mat-card-header>
+        <mat-card-title>Montecarlo</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="col-12">
+            <div class="col-6">
+                <mat-form-field>
+                    <input matInput type="text" placeholder="Enter your function" name="userFunction" [(ngModel)]="userFunction">
+                </mat-form-field>
+                <br/>
+                <mat-form-field>
+                    <input matInput type="number" placeholder="Enter the amount of values" name="amountOfValues" [(ngModel)]="amountOfValues">
+                </mat-form-field>
+                <br/>
+                <mat-form-field>
+                    <input matInput type="number" placeholder="Enter 'a' value" name="a" [(ngModel)]="a">
+                </mat-form-field>
+                <br/>
+                <mat-form-field>
+                    <input matInput type="number" placeholder="Enter 'b' value" name="b" [(ngModel)]="b">
+                </mat-form-field>
+                <br/>
+                <label>Original function result: {{ originalFunctionResult }}</label> 
+                <br/>
+                <br/>
+                <label>Calculated function result: {{ calculatedFunctionResult }}</label> 
+                <br/>
+                <br/>
+                <br/>
+                <button mat-raised-button color="primary" (click)="execute()">
+                    execute
+                </button>
+            </div>
+            <div class="col-6">
+                <canvas id="canvas">{{ chart }}</canvas>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
