@@ -11,7 +11,9 @@ import * as _ from 'lodash';
 export class MontecarloComponent implements OnInit {
 
   chart: Chart;
-  evolutionChart: CharacterData;
+  dataset: any[];
+
+  evolutionChart: Chart;
   evolutionDataset: any[];
   evolutionPointsX: any[];
 
@@ -56,6 +58,9 @@ export class MontecarloComponent implements OnInit {
 
   reset() {
     this.chart = new Chart('canvas', {type: 'line',data:{}});
+    this.dataset = [];
+    this.xPoints = [];
+    this.yPoints = [];
     this.evolutionChart = new Chart('evolutionCanvas', {type: 'line',data:{}})
     this.evolutionDataset = [];
     this.evolutionPointsX = [];
@@ -90,13 +95,13 @@ export class MontecarloComponent implements OnInit {
   }
 
   drawGraph() {
-    var dataset = this.generateDataset();
+    this.generateDataset();
 
     this.chart = new Chart('canvas', {
       type: 'line',
       data: {
         labels: this.xPoints,
-        datasets: dataset
+        datasets: this.dataset
       },
       options: {
         legend: {
@@ -107,23 +112,21 @@ export class MontecarloComponent implements OnInit {
   }
 
   generateDataset() {
-    var dataset = [];
     var mainDraw = {
       data: this.yPoints,
       borderColor: '#0300ff',
       fill: false
     };
 
-    dataset.push(mainDraw);
-    dataset.push(this.calculateLimitA());
-    dataset.push(this.calculateLimitB());
-    dataset.push(this.calculateC());
+    this.dataset.push(mainDraw);
+    this.dataset.push(this.calculateLimitA());
+    this.dataset.push(this.calculateLimitB());
+    this.dataset.push(this.calculateC());
 
     this.generateRandomDot();
 
-    this.greenDots.forEach(dot => dataset.push(dot));
-    this.redDots.forEach(dot => dataset.push(dot));
-    return dataset;
+    this.greenDots.forEach(dot => this.dataset.push(dot));
+    this.redDots.forEach(dot => this.dataset.push(dot));
   }
 
   calculateLimitA() {
@@ -181,7 +184,7 @@ export class MontecarloComponent implements OnInit {
   }
 
   generateRandomDot() {
-    for (let i = 0; i <= this.amountOfDots; i++) {
+    for (let i = 0; i <= this.amountOfDots -1; i++) {
       var xRandom = _.random(this.aLimit, this.bLimit);
       var yRandom = _.random(0, this.cLimit);
 
