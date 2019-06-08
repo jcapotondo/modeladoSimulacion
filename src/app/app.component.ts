@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UIContext } from './ui.context';
 
 @Component({
   selector: 'app-root',
@@ -6,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  constructor() { }
+  constructor(public uiContext: UIContext) { }
 
   ngOnInit() {
   }

@@ -1,5 +1,10 @@
-.col-6 {
-    width: 50%;
+.col-3 {
+    width: 25%;
+    display: inline-block;
+}
+
+.col-9 {
+    width: 75%;
     display: inline-block;
 }
 
@@ -14,4 +19,10 @@
 .canvas {
     width: 400px !important;
     height: 200px !important;
+    margin: 1% 0 3% 30%;
+}
+
+.canvas-container {
+    width: 75%;
+    display: inline-block;
 }

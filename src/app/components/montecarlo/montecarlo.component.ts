@@ -254,6 +254,7 @@ export class MontecarloComponent implements OnInit {
   calculateIntegralValue(){
     var n = this.amountOfDots;
     var greenDots = this.greenDots.length;
+    console.log(this.cLimit)
 
     this.calculatedFunctionResult = (greenDots/n) * (this.bLimit - this.aLimit) * this.cLimit;
   }

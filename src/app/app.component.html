@@ -1,1 +1,27 @@
-<montecarlo></montecarlo>
+<mat-toolbar color="primary" class="toolbar">
+    <div class="titleContainer">
+        <div class="buttonsContent">
+        <mat-icon mat-icon-button (click)="snav.toggle()">menu</mat-icon>
+        </div>
+        <h1 class="title">{{this.uiContext.title}}</h1>
+    </div>
+</mat-toolbar>
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #snav mode="over" fixedTopGap="56" style="width: 195px;" (click)="snav.close()">
+        <mat-nav-list>
+            <mat-list-item routerLink="montecarlo">
+                <mat-icon>keyboard_arrow_right</mat-icon>
+                <a>Montecarlo</a>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item routerLink=" ">
+                <mat-icon>add</mat-icon>
+                <a>Euler</a>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

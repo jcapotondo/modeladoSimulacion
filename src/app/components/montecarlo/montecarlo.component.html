@@ -1,12 +1,12 @@
 <mat-card class="card-container">
-  <mat-card-header>
-      <mat-card-title>Montecarlo</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-      <div class="col-12">
-          <div class="col-6">
-              <mat-form-field>
-                  <input matInput type="text" placeholder="Enter your function" name="userFunction" [(ngModel)]="userFunction">
+    <mat-card-header>
+        <mat-card-title>Montecarlo</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="col-12">
+            <div class="col-3">
+                <mat-form-field>
+                <input matInput type="text" placeholder="Enter your function" name="userFunction" [(ngModel)]="userFunction">
                 </mat-form-field>
                 <br/>
                 <mat-form-field>
@@ -35,15 +35,13 @@
                 <button mat-raised-button color="primary" (click)="execute()">
                     execute
                 </button>
-          </div>
-          <div class="col-6">
-            <div>
-                <canvas class="canvas" id="evolutionCanvas">{{ evolutionChart }}</canvas>
             </div>
-            <div>
-                <canvas class="canvas" id="canvas">{{ chart }}</canvas>
+            <div class="col-9">
+                <div class="canvas-container">
+                    <canvas class="canvas" id="evolutionCanvas">{{ evolutionChart }}</canvas>
+                    <canvas class="canvas" id="canvas">{{ chart }}</canvas>
+                </div>
             </div>
-          </div>
-      </div>
-  </mat-card-content>
+        </div>
+    </mat-card-content>
 </mat-card>
