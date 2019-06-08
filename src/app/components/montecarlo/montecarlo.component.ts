@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
 import * as math from 'mathjs';
 import * as _ from 'lodash';
+import {UIContext} from '../../ui.context';
 
 @Component({
   selector: 'montecarlo',
@@ -17,13 +18,9 @@ export class MontecarloComponent implements OnInit {
   evolutionDataset: any[];
   evolutionPointsX: any[];
 
-  xPoints = [];
-  yPoints = [];
-  cLine = [];
+  graphPoints = [];
 
-  lineValuesMap = [];
-
-  aLimit = 0; 
+  aLimit = 0;
   bLimit = 0;
   cLimit = 0;
   amountOfDots = 0;
@@ -33,20 +30,21 @@ export class MontecarloComponent implements OnInit {
 
   originalFunctionResult: number;
   calculatedFunctionResult: number;
-  
+
   greenDots = [];
   redDots = [];
 
   userFunction: string;
   mathFunction: any;
 
-  constructor() { }
+  constructor(public uiContext: UIContext) { }
 
   ngOnInit() {
+    this.uiContext.setTittle('Montecarlo');
   }
 
   execute() {
-     //this.originalFunctionResult = this.calculateOriginalResult();
+     // this.originalFunctionResult = this.calculateOriginalResult();
 
     this.reset();
     this.findGraphicPoints();
@@ -57,11 +55,10 @@ export class MontecarloComponent implements OnInit {
   }
 
   reset() {
-    this.chart = new Chart('canvas', {type: 'line',data:{}});
+    this.graphPoints = [];
+    this.chart = new Chart('canvas', {type: 'line', data: {}});
     this.dataset = [];
-    this.xPoints = [];
-    this.yPoints = [];
-    this.evolutionChart = new Chart('evolutionCanvas', {type: 'line',data:{}})
+    this.evolutionChart = new Chart('evolutionCanvas', {type: 'line', data: {}});
     this.evolutionDataset = [];
     this.evolutionPointsX = [];
     this.totalPoints = 0;
@@ -82,11 +79,8 @@ export class MontecarloComponent implements OnInit {
   findGraphicPoints() {
     this.mathFunction = this.parseFunction(this.userFunction);
     for (let i = 0; i <= this.amountOfPoints; i++) {
-      var yValue = this.mathFunction.eval({x: i});
-
-      this.xPoints.push(i);
-      this.yPoints.push(yValue);
-      this.lineValuesMap[i] = yValue;
+      const yValue = this.mathFunction.eval({x: i});
+      this.graphPoints[i] = yValue;
     }
   }
 
@@ -96,28 +90,46 @@ export class MontecarloComponent implements OnInit {
 
   drawGraph() {
     this.generateDataset();
-
+    this.graphPoints.sort((a, b) => a - b);
     this.chart = new Chart('canvas', {
       type: 'line',
       data: {
-        labels: this.xPoints,
+        labels: this.graphPoints.map((value, index) => index),
         datasets: this.dataset
       },
       options: {
         legend: {
           display: false
         },
+        ticks: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                precision: 1,
+                stepSize: 1
+              }
+            }],
+            xAxes: [{
+              ticks: {
+                beginAtZero: true,
+                precision: 1,
+                stepSize: 0.5,
+                steps: this.graphPoints.length,
+              }
+            }],
+          },
+        },
       }
     });
   }
 
   generateDataset() {
-    var mainDraw = {
-      data: this.yPoints,
+    const mainDraw = {
+      data: this.generateGraphPoints(),
       borderColor: '#0300ff',
       fill: false
     };
-
     this.dataset.push(mainDraw);
     this.dataset.push(this.calculateLimitA());
     this.dataset.push(this.calculateLimitB());
@@ -129,12 +141,23 @@ export class MontecarloComponent implements OnInit {
     this.redDots.forEach(dot => this.dataset.push(dot));
   }
 
+  generateGraphPoints() {
+    const points = [];
+    this.graphPoints.forEach((value, index) =>  {
+      points.push({
+          x: index,
+          y: value
+      });
+    });
+    return points;
+  }
+
   calculateLimitA() {
     return {
       label: 'a',
       data: [
         {x: this.aLimit, y: 0},
-        {x: this.aLimit, y: this.mathFunction.eval({x:this.aLimit})}
+        {x: this.aLimit, y: this.mathFunction.eval({x: this.aLimit})}
       ],
       borderColor: '#00ccba',
       fill: false,
@@ -148,7 +171,7 @@ export class MontecarloComponent implements OnInit {
       label: 'b',
       data: [
         {x: this.bLimit, y: 0},
-        {x: this.bLimit, y: this.mathFunction.eval({x:this.bLimit})}
+        {x: this.bLimit, y: this.mathFunction.eval({x: this.bLimit})}
       ],
       borderColor: '#00ccba',
       fill: false,
@@ -159,7 +182,7 @@ export class MontecarloComponent implements OnInit {
 
   calculateC() {
     this.calculateLimitC();
-    
+
     return {
       label: 'c',
       data: [
@@ -173,10 +196,10 @@ export class MontecarloComponent implements OnInit {
     };
   }
 
-  calculateLimitC(){
+  calculateLimitC() {
     for (let i = this.aLimit; i <= this.bLimit; i++) {
-      var valueAtPointI = this.mathFunction.eval({x: i});
-      if(valueAtPointI > this.cLimit){
+      const valueAtPointI = this.mathFunction.eval({x: i});
+      if (valueAtPointI > this.cLimit) {
         this.cLimit = valueAtPointI;
       }
     }
@@ -184,23 +207,27 @@ export class MontecarloComponent implements OnInit {
   }
 
   generateRandomDot() {
-    for (let i = 0; i <= this.amountOfDots -1; i++) {
-      var xRandom = _.random(this.aLimit, this.bLimit);
-      var yRandom = _.random(0, this.cLimit);
+    for (let i = 0; i <= this.amountOfDots - 1; i++) {
+      const xRandom = _.random(this.aLimit, this.bLimit);
+      const yRandom = _.random(0, this.cLimit);
 
-      var yValueAtX = this.lineValuesMap[xRandom];
-
-      (yValueAtX < yRandom) ? this.addRedDot(xRandom, yRandom) : this.addGreenDot(xRandom, yRandom);
+      this.generateDot(xRandom, yRandom);
 
       this.totalPoints ++;
       this.generateEvolutionDataset(i);
     }
   }
 
-  addGreenDot(xValue: any, yValue: any) {
+  generateDot(x: number, y: number) {
+    const graphValueAtX = this.graphPoints[x];
+
+    (graphValueAtX < y) ? this.addRedDot(x, y) : this.addGreenDot(x, y);
+  }
+
+  addGreenDot(xValue: number, yValue: number) {
     this.greenDots.push({
-      backgroundColor: "#19a000",
-      borderColor: "#19a000",
+      backgroundColor: '#19a000',
+      borderColor: '#19a000',
       data: [{
         x: xValue,
         y: yValue,
@@ -209,10 +236,10 @@ export class MontecarloComponent implements OnInit {
     });
   }
 
-  addRedDot(xValue: any, yValue:any) {
+  addRedDot(xValue: number, yValue: number) {
     this.redDots.push( {
-      backgroundColor: "#ff0000",
-      borderColor: "#ff0000",
+      backgroundColor: '#ff0000',
+      borderColor: '#ff0000',
       data: [{
         x: xValue,
         y: yValue,
@@ -223,8 +250,8 @@ export class MontecarloComponent implements OnInit {
 
   generateEvolutionDataset(amountOfValues) {
     this.calculateIntegralValue();
-    
-    var obj = {
+
+    const obj = {
       label: 'a',
       data: [
         {x: amountOfValues, y: this.calculatedFunctionResult},
@@ -251,11 +278,11 @@ export class MontecarloComponent implements OnInit {
     });
   }
 
-  calculateIntegralValue(){
-    var n = this.amountOfDots;
-    var greenDots = this.greenDots.length;
-    console.log(this.cLimit)
+  calculateIntegralValue() {
+    const n = this.amountOfDots;
+    const greenDots = this.greenDots.length;
+    // console.log(this.cLimit);
 
-    this.calculatedFunctionResult = (greenDots/n) * (this.bLimit - this.aLimit) * this.cLimit;
+    this.calculatedFunctionResult = (greenDots / n) * (this.bLimit - this.aLimit) * this.cLimit;
   }
 }
