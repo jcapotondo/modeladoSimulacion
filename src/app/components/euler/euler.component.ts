@@ -50,6 +50,7 @@ export class EulerComponent implements OnInit {
 
   findGraphicPoints() {
     this.eulerMethod();
+    this.eulerImprovedMethod();
   }
 
   eulerMethod() {
@@ -61,7 +62,7 @@ export class EulerComponent implements OnInit {
     }
   }
 
-  eulerImprovedMethod(x, y0) {
+  eulerImprovedMethod() {
   }
 
   drawEulerGraph() {
