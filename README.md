@@ -2,7 +2,7 @@
 
 # Contenidos
 
-* [Instalación](#introduccion)
+* [Instalación](#instalación)
 
 ## Instalación
 
