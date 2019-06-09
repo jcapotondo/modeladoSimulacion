@@ -16,12 +16,6 @@
   height: 400px;
 }
 
-.canvas {
-  width: 400px !important;
-  height: 200px !important;
-  margin: 1% 0 3% 30%;
-}
-
 .canvas-container {
   width: 75%;
 }

@@ -7,9 +7,20 @@
         </mat-form-field>
         <br/>
         <mat-form-field>
-          <input matInput type="number" placeholder="Enter the amount of values" name="amountOfPoints" [(ngModel)]="amountOfPoints">
+          <input matInput type="number" placeholder="Cantidad de puntos" name="amountOfPoints" [(ngModel)]="nValue">
         </mat-form-field>
         <br/>
+        <mat-form-field>
+          <input matInput type="number" placeholder="valor de 'a'" name="aLimit" [(ngModel)]="aValue">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <input matInput type="number" placeholder="Valor de 'b'" name="bLimit" [(ngModel)]="bValue">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <input matInput type="number" placeholder="Valor de 'h'" name="amountOfDots" [(ngModel)]="hValue">
+        </mat-form-field>
         <br/>
         <br/>
         <button mat-raised-button color="primary" (click)="execute()">
@@ -18,8 +29,7 @@
       </div>
       <div class="col-9">
         <div class="canvas-container">
-          <canvas class="canvas" id="eulerCanvas">{{ eulerChart }}</canvas>
-          <canvas class="canvas" id="eulerImprovedCanvas">{{ eulerImprovedChart }}</canvas>
+          <canvas id="eulerCanvas">{{ eulerChart }}</canvas>
         </div>
       </div>
     </div>

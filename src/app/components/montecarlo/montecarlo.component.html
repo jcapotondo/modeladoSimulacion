@@ -3,34 +3,39 @@
         <div class="col-12">
             <div class="col-3">
                 <mat-form-field>
-                <input matInput type="text" placeholder="Enter your function" name="userFunction" [(ngModel)]="userFunction">
+                <input matInput type="text" placeholder="Funcion" name="userFunction" [(ngModel)]="userFunction">
                 </mat-form-field>
                 <br/>
                 <mat-form-field>
-                    <input matInput type="number" placeholder="Enter the amount of values" name="amountOfPoints" [(ngModel)]="amountOfPoints">
+                    <input matInput type="number" placeholder="Cantidad de valores" name="amountOfPoints" [(ngModel)]="amountOfPoints">
                 </mat-form-field>
                 <br/>
                 <mat-form-field>
-                    <input matInput type="number" placeholder="Enter 'a' value" name="aLimit" [(ngModel)]="aLimit">
+                    <input matInput type="number" placeholder="valor de 'a'" name="aLimit" [(ngModel)]="aLimit">
                 </mat-form-field>
                 <br/>
                 <mat-form-field>
-                    <input matInput type="number" placeholder="Enter 'b' value" name="bLimit" [(ngModel)]="bLimit">
+                    <input matInput type="number" placeholder="Valor de 'b'" name="bLimit" [(ngModel)]="bLimit">
                 </mat-form-field>
                 <br/>
                 <mat-form-field>
-                    <input matInput type="number" placeholder="Enter the amount of dots" name="amountOfDots" [(ngModel)]="amountOfDots">
+                    <input matInput type="number" placeholder="Cantidad de puntos" name="amountOfDots" [(ngModel)]="amountOfDots">
                 </mat-form-field>
                 <br/>
-                <label>Original function result: {{ originalFunctionResult }}</label> 
+                <br/>
+                <label>Metodo de Montecarlo: {{ montecarloResult }}</label>
                 <br/>
                 <br/>
-                <label>Calculated function result: {{ calculatedFunctionResult }}</label> 
                 <br/>
+                <label>Metodo de los rectangulos: {{ rectanglesResult }}</label>
+                <br/>
+                <br/>
+                <br/>
+                <label>Metodo de los trapecios: {{ trapezoidResult }}</label>
                 <br/>
                 <br/>
                 <button mat-raised-button color="primary" (click)="execute()">
-                    execute
+                    Calcular
                 </button>
             </div>
             <div class="col-9">

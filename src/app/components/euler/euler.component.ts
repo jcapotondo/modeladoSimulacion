@@ -11,15 +11,18 @@ import * as math from 'mathjs';
 export class EulerComponent implements OnInit {
 
 
-  eulerImprovedChart: Chart;
   eulerChart: Chart;
 
   eulerPoints: number[];
   eulerImprovedPoints: number[];
 
-  amountOfPoints = 0;
   userFunction: string;
   mathFunction: any;
+
+  nValue = 0;
+  aValue: number;
+  bValue: number;
+  hValue: number;
 
 
   constructor(public uiContext: UIContext) { }
@@ -30,31 +33,35 @@ export class EulerComponent implements OnInit {
 
   execute() {
     this.reset();
+    this.parseFunction();
     this.findGraphicPoints();
     this.drawEulerGraph();
-    this.drawEulerImprovedGraph();
   }
 
   reset() {
-    this.eulerImprovedChart = new Chart('eulerCanvas', {type: 'line', data: {}});
-    this.eulerChart = new Chart('eulerImprovedCanvas', {type: 'line', data: {}});
+    this.eulerChart = new Chart('eulerCanvas', {type: 'line', data: {}});
     this.eulerPoints = [];
     this.eulerImprovedPoints = [];
   }
 
+  parseFunction() {
+    this.mathFunction = math.parse(this.userFunction).compile();
+  }
 
   findGraphicPoints() {
-    this.mathFunction = this.parseFunction(this.userFunction);
-    for (let i = 0; i <= this.amountOfPoints; i++) {
-      const yValue = this.mathFunction.eval({x: i});
+    this.eulerMethod();
+  }
 
-      this.eulerPoints[i] = yValue;
-      this.eulerImprovedPoints[i] = yValue;
+  eulerMethod() {
+    let y = 0;
+
+    for (let x = 0; x <= this.nValue; x += this.hValue) {
+      this.eulerPoints[x] = y;
+      y += this.mathFunction.eval({x, y}) * this.hValue;
     }
   }
 
-  parseFunction(functionToParse: string) {
-    return math.parse(functionToParse).compile();
+  eulerImprovedMethod(x, y0) {
   }
 
   drawEulerGraph() {
@@ -62,40 +69,30 @@ export class EulerComponent implements OnInit {
       type: 'line',
       data: {
         labels: this.eulerPoints.map((value, index) => index),
-        datasets: this.generateDataset(this.eulerPoints)
+        datasets: this.generateDataset()
       },
       options: {
         legend: {
-          display: false
+          display: true
         }
       }
     });
   }
 
-  drawEulerImprovedGraph() {
-    this.eulerChart = new Chart('eulerImprovedCanvas', {
-      type: 'line',
-      data: {
-        labels: this.eulerImprovedPoints.map((value, index) => index),
-        datasets: this.generateDataset(this.eulerImprovedPoints)
-      },
-      options: {
-        legend: {
-          display: false
-        }
-      }
-    });
+  generateDataset() {
+    return [
+      this.linePoints(this.eulerPoints, '#0300ff', 'Euler'),
+      this.linePoints(this.eulerImprovedPoints, '#990003', 'Euler Mejorado'),
+    ];
   }
 
-  generateDataset(map) {
-    const dataset = [];
-    const mainDraw = {
+  linePoints(map, borderColor, label) {
+    return {
       data: this.generateGraphPoints(map),
-      borderColor: '#0300ff',
-      fill: false
+      borderColor,
+      label,
+      fill: false,
     };
-    dataset.push(mainDraw);
-    return dataset;
   }
 
   generateGraphPoints(map) {

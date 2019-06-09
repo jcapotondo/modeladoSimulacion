@@ -3,6 +3,7 @@ import { Chart } from 'chart.js';
 import * as math from 'mathjs';
 import * as _ from 'lodash';
 import {UIContext} from '../../ui.context';
+import {debug} from 'util';
 
 @Component({
   selector: 'montecarlo',
@@ -28,8 +29,9 @@ export class MontecarloComponent implements OnInit {
 
   totalPoints = 0;
 
-  originalFunctionResult: number;
-  calculatedFunctionResult: number;
+  rectanglesResult: number;
+  trapezoidResult: number;
+  montecarloResult: number;
 
   greenDots = [];
   redDots = [];
@@ -44,10 +46,14 @@ export class MontecarloComponent implements OnInit {
   }
 
   execute() {
-     // this.originalFunctionResult = this.calculateOriginalResult();
-
     this.reset();
+
+    this.parseFunction();
+
+    this.calculateRectangles();
+    this.calculateTrapezoids();
     this.findGraphicPoints();
+
     this.drawGraph();
     this.drawEvolutionChart();
 
@@ -65,27 +71,42 @@ export class MontecarloComponent implements OnInit {
     this.cLimit = 0;
     this.greenDots = [];
     this.redDots = [];
+
+    this.rectanglesResult = 0;
+    this.trapezoidResult = 0;
+    this.montecarloResult = 0;
   }
 
-  calculateOriginalResult() {
-    const f = this.parseFunction(this.userFunction);
+  parseFunction() {
+    this.mathFunction = math.parse(this.userFunction).compile();
+  }
 
-    const asd = math.integral('x^2', 'x');
-    console.log(math.integrate(asd, 0, 1));
+  calculateRectangles() {
+    const h = (this.bLimit - this.aLimit) / this.amountOfPoints;
+
+    let result = 0;
+
+    for (let k = this.aLimit; k <= this.bLimit; k++) {
+      const xValue = this.aLimit + (k + 0.5) * h;
+      const a = (this.mathFunction.eval({x : xValue}));
+      result += a;
+    }
+
+    this.rectanglesResult = result * h;
+  }
+
+  calculateTrapezoids() {
 
     return 0;
   }
 
   findGraphicPoints() {
-    this.mathFunction = this.parseFunction(this.userFunction);
-    for (let i = 0; i <= this.amountOfPoints; i++) {
-      const yValue = this.mathFunction.eval({x: i});
-      this.graphPoints[i] = yValue;
-    }
-  }
+    for (let x = 0; x <= this.amountOfPoints; x++) {
 
-  parseFunction(functionToParse: string) {
-    return math.parse(functionToParse).compile();
+      const yValue = this.mathFunction.eval({x});
+
+      this.graphPoints[x] = yValue;
+    }
   }
 
   drawGraph() {
@@ -130,6 +151,7 @@ export class MontecarloComponent implements OnInit {
       borderColor: '#0300ff',
       fill: false
     };
+
     this.dataset.push(mainDraw);
     this.dataset.push(this.calculateLimitA());
     this.dataset.push(this.calculateLimitB());
@@ -197,8 +219,10 @@ export class MontecarloComponent implements OnInit {
   }
 
   calculateLimitC() {
-    for (let i = this.aLimit; i <= this.bLimit; i++) {
-      const valueAtPointI = this.mathFunction.eval({x: i});
+    for (let x = this.aLimit; x <= this.bLimit; x++) {
+
+      const valueAtPointI = this.mathFunction.eval({x});
+
       if (valueAtPointI > this.cLimit) {
         this.cLimit = valueAtPointI;
       }
@@ -254,7 +278,7 @@ export class MontecarloComponent implements OnInit {
     const obj = {
       label: 'a',
       data: [
-        {x: amountOfValues, y: this.calculatedFunctionResult},
+        {x: amountOfValues, y: this.montecarloResult},
       ],
       borderColor: '#00ccba',
       fill: false,
@@ -283,6 +307,6 @@ export class MontecarloComponent implements OnInit {
     const greenDots = this.greenDots.length;
     // console.log(this.cLimit);
 
-    this.calculatedFunctionResult = (greenDots / n) * (this.bLimit - this.aLimit) * this.cLimit;
+    this.montecarloResult = (greenDots / n) * (this.bLimit - this.aLimit) * this.cLimit;
   }
 }
