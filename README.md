@@ -3,25 +3,25 @@
 # Contenidos
 
 * [Instalación](#instalación)
+* [Correr proyecto](#correr-proyecto)
+* [Build](#build)
+* [Contacto](#contacto)
 
 ## Instalación
 
-El proyecto fue creado con la versión de angular 8.0.1. Instalar para poder correr el proyecto localmente: 
+El proyecto fue creado con la versión de angular 8.0.1. Para poder utilizarlo localmente se debe contar con los siguientes elementos: 
 - [Angular CLI](https://github.com/angular/angular-cli).
 - [NPM](https://www.npmjs.com/get-npm)
 
-## Levantar proyecto
+## Correr proyecto
 
-Primero se deben instalar las dependencias del proyecto. Para hacerlo, dirigirse al directorio donde está clonado y desde la terminal ingresar el comando `npm install`.
+Ahora hay que instalar las dependencias del proyecto. Para hacerlo, dirigirse al directorio donde está clonado y desde la terminal ingresar el comando `npm install`.
 
-Correr en una terminal `ng serve`.
-
-
-Run  for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Luego `ng serve` levantará el proyecto en modo de desarrollo localmente en el puerto 4200. Desde algún navegador entrar a `http://localhost:4200/` y automáticamente se recargarán los cambios realizados sobre cualquier archivo.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Correr `ng build` para hacer un build del proyecto. Los articafts se guardarán en el directorio `dist/`. En caso de querer realizar un build productivo, utilizar el flag `--prod`.
 
 ## Contacto
 sebastiancapotondo@gmail.com
