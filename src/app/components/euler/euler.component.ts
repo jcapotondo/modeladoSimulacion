@@ -56,7 +56,6 @@ export class EulerComponent implements OnInit {
   addEulerPoint(t, x) { this.eulerPoints.push({t, x}); }
 
   eulerMethod() {
-    this.addEulerPoint(this.aValue, this.x0Value);
     const a = this.aValue;
     const h = this.hValue;
     const n = this.nValue;
@@ -75,7 +74,6 @@ export class EulerComponent implements OnInit {
   addEulerImprovedPoint(t, x) { this.eulerImprovedPoints.push({t, x}); }
 
   eulerImprovedMethod() {
-    this.addEulerPoint(this.aValue, this.x0Value);
     const a = this.aValue;
     const h = this.hValue;
     const n = this.nValue;
