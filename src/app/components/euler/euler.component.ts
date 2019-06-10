@@ -63,7 +63,7 @@ export class EulerComponent implements OnInit {
       console.log(number)
 
 
-      x += this.mathFunction.eval( {x, t} ) * this.hValue;
+      x += number * this.hValue;
     }
 
     console.log(this.eulerPoints)
