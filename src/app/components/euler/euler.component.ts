@@ -9,8 +9,6 @@ import * as math from 'mathjs';
   styleUrls: ['./euler.component.css']
 })
 export class EulerComponent implements OnInit {
-
-
   eulerChart: Chart;
 
   eulerPoints: number[];
@@ -24,11 +22,10 @@ export class EulerComponent implements OnInit {
   bValue: number;
   hValue: number;
 
-
   constructor(public uiContext: UIContext) { }
 
   ngOnInit() {
-    this.uiContext.setTittle('Euler & Euler Mejorado');
+    this.uiContext.setTittle('Metodo de Euler & Euler Mejorado');
   }
 
   execute() {
@@ -45,7 +42,10 @@ export class EulerComponent implements OnInit {
   }
 
   parseFunction() {
-    this.mathFunction = math.parse(this.userFunction).compile();
+    console.log("User function -> " + this.userFunction)
+    const parser = math.parser();
+    console.log(parser)
+    this.mathFunction = parser.eval(`f(x, t) = ${this.userFunction}` );
   }
 
   findGraphicPoints() {
@@ -54,12 +54,19 @@ export class EulerComponent implements OnInit {
   }
 
   eulerMethod() {
-    let y = 0;
+    let x = 0;
 
-    for (let x = 0; x <= this.nValue; x += this.hValue) {
-      this.eulerPoints[x] = y;
-      y += this.mathFunction.eval({x, y}) * this.hValue;
+    for (let t = 0 + this.hValue, k = 0; t <= this.nValue; t += this.hValue, k ++) {
+      this.eulerPoints[t] = x;
+
+      const number = this.mathFunction.eval( `f(${x}, ${t})` );
+      console.log(number)
+
+
+      x += this.mathFunction.eval( {x, t} ) * this.hValue;
     }
+
+    console.log(this.eulerPoints)
   }
 
   eulerImprovedMethod() {
