@@ -148,13 +148,13 @@ export class EulerComponent implements OnInit {
 
   generateGraphPoints(map) {
     const points = [];
-    map.forEach((value, index) =>  {
-      if (index <= this.bValue) {
+    map.forEach((val) =>  {
+      if (val.t <= this.bValue) {
         points.push({
-          x: index,
-          y: value
-        });  
-      }      
+          x: val.t,
+          y: val.x
+        });
+      }
     });
     return points;
   }
