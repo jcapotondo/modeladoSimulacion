@@ -84,20 +84,32 @@ export class MontecarloComponent implements OnInit {
   calculateRectangles() {
     const h = (this.bLimit - this.aLimit) / this.amountOfPoints;
 
-    let result = 0;
+    let calculatedValue = 0;
 
-    for (let k = this.aLimit; k <= this.bLimit; k++) {
-      const xValue = this.aLimit + (k + 0.5) * h;
-      const a = (this.mathFunction.eval({x : xValue}));
-      result += a;
+    for (let k = 0; k <= this.amountOfPoints - 1; k++) {
+      const x = this.aLimit + (k + 0.5) * h;
+
+      calculatedValue +=  this.mathFunction.eval({x});
     }
 
-    this.rectanglesResult = result * h;
+    this.rectanglesResult = calculatedValue * h;
   }
 
   calculateTrapezoids() {
+    const h = (this.bLimit - this.aLimit) / this.amountOfPoints;
 
-    return 0;
+    let calculatedValue = 0;
+
+    for (let k = 0; k <= this.amountOfPoints - 1; k++) {
+      const xk = this.aLimit + k * h;
+
+      calculatedValue +=  this.mathFunction.eval({x: xk});
+    }
+
+    const functionOnA = this.mathFunction.eval( {x : this.aLimit} );
+    const functionOnB = this.mathFunction.eval( {x : this.bLimit} );
+
+    this.trapezoidResult = (h / 2) * (functionOnA + functionOnB + (2 * calculatedValue));
   }
 
   findGraphicPoints() {

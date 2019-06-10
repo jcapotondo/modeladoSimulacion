@@ -55,7 +55,6 @@ export class EulerComponent implements OnInit {
 
   eulerMethod() {
     let y = 0;
-
     for (let x = 0; x <= this.nValue; x += this.hValue) {
       this.eulerPoints[x] = y;
       y += this.mathFunction.eval({x, y}) * this.hValue;
