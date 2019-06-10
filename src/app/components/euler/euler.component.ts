@@ -15,12 +15,13 @@ export class EulerComponent implements OnInit {
   eulerImprovedPoints: number[];
 
   userFunction: string;
-  mathFunction: any;
+  mathFunctionParser: any;
 
   nValue = 0;
   aValue: number;
   bValue: number;
   hValue: number;
+  x0Value: number;
 
   constructor(public uiContext: UIContext) { }
 
@@ -42,10 +43,9 @@ export class EulerComponent implements OnInit {
   }
 
   parseFunction() {
-    console.log("User function -> " + this.userFunction)
     const parser = math.parser();
-    console.log(parser)
-    this.mathFunction = parser.eval(`f(x, t) = ${this.userFunction}` );
+    parser.eval(`f(t, x) = ${this.userFunction}` );
+    this.mathFunctionParser = parser;
   }
 
   findGraphicPoints() {
@@ -54,19 +54,11 @@ export class EulerComponent implements OnInit {
   }
 
   eulerMethod() {
-    let x = 0;
-
-    for (let t = 0 + this.hValue, k = 0; t <= this.nValue; t += this.hValue, k ++) {
+    let x = this.x0Value;
+    for (let t = this.aValue; t <= this.nValue; t += this.hValue) {
       this.eulerPoints[t] = x;
-
-      const number = this.mathFunction.eval( `f(${x}, ${t})` );
-      console.log(number)
-
-
-      x += number * this.hValue;
+      x += this.mathFunctionParser.eval( `f(${t}, ${x})` ) * this.hValue;
     }
-
-    console.log(this.eulerPoints)
   }
 
   eulerImprovedMethod() {
@@ -82,6 +74,22 @@ export class EulerComponent implements OnInit {
       options: {
         legend: {
           display: true
+        },
+        scales: {
+          xAxes: [ {
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Eje t'
+            },
+          } ],
+          yAxes: [ {
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Eje x'
+            }
+          } ]
         }
       }
     });
