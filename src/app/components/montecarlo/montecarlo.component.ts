@@ -140,14 +140,15 @@ export class MontecarloComponent implements OnInit {
               ticks: {
                 beginAtZero: true,
                 precision: 1,
-                stepSize: 1
+                stepSize: 1,
+                steps: this.graphPoints.length,
               }
             }],
             xAxes: [{
               ticks: {
                 beginAtZero: true,
                 precision: 1,
-                stepSize: 0.5,
+                stepSize: 1,
                 steps: this.graphPoints.length,
               }
             }],
@@ -165,9 +166,9 @@ export class MontecarloComponent implements OnInit {
     };
 
     this.dataset.push(mainDraw);
-    this.dataset.push(this.calculateLimitA());
-    this.dataset.push(this.calculateLimitB());
-    this.dataset.push(this.calculateC());
+    this.dataset.push(this.linePointsA());
+    this.dataset.push(this.linePointsB());
+    this.dataset.push(this.linePointsC());
 
     this.generateRandomDot();
 
@@ -186,7 +187,7 @@ export class MontecarloComponent implements OnInit {
     return points;
   }
 
-  calculateLimitA() {
+  linePointsA() {
     return {
       label: 'a',
       data: [
@@ -200,7 +201,7 @@ export class MontecarloComponent implements OnInit {
     };
   }
 
-  calculateLimitB() {
+  linePointsB() {
     return {
       label: 'b',
       data: [
@@ -214,7 +215,7 @@ export class MontecarloComponent implements OnInit {
     };
   }
 
-  calculateC() {
+  linePointsC() {
     this.calculateLimitC();
 
     return {
@@ -255,9 +256,9 @@ export class MontecarloComponent implements OnInit {
   }
 
   generateDot(x: number, y: number) {
-    const graphValueAtX = this.graphPoints[x];
+    const yValueAtX = this.graphPoints[x];
 
-    (graphValueAtX < y) ? this.addRedDot(x, y) : this.addGreenDot(x, y);
+    (yValueAtX < y) ? this.addRedDot(x, y) : this.addGreenDot(x, y);
   }
 
   addGreenDot(xValue: number, yValue: number) {
@@ -284,19 +285,21 @@ export class MontecarloComponent implements OnInit {
     });
   }
 
-  generateEvolutionDataset(amountOfValues) {
+  generateEvolutionDataset(x) {
     this.calculateIntegralValue();
+    const y = this.montecarloResult;
 
-    const obj = {
-      label: 'a',
-      data: [
-        {x: amountOfValues, y: this.montecarloResult},
-      ],
-      borderColor: '#00ccba',
-      fill: false,
-    };
-    this.evolutionDataset.push(obj);
-    this.evolutionPointsX.push(amountOfValues);
+    this.evolutionDataset.push(
+      {
+        label: x,
+        data: [
+          {x, y},
+        ],
+        borderColor: '#00ccba',
+        fill: false,
+      }
+    );
+    this.evolutionPointsX.push(x);
   }
 
   drawEvolutionChart() {
@@ -317,8 +320,9 @@ export class MontecarloComponent implements OnInit {
   calculateIntegralValue() {
     const n = this.amountOfDots;
     const greenDots = this.greenDots.length;
-    // console.log(this.cLimit);
 
-    this.montecarloResult = (greenDots / n) * (this.bLimit - this.aLimit) * this.cLimit;
+    if (this.amountOfDots > 0) {
+      this.montecarloResult = (greenDots / n) * (this.bLimit - this.aLimit) * this.cLimit;
+    }
   }
 }
