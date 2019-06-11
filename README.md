@@ -27,7 +27,7 @@ Para poder correr localmente la version instalada de angular-cli, se pueden llam
 
 ### Windows 
 
-En el siguiente tutorial se explica paso a paso como debe instalarse angular en el sistema operativo.
+En el siguiente tutorial se explica paso a paso.
 
 [Enlace](https://www.freecodecamp.org/news/how-to-get-up-and-running-with-angular-on-windows-7405ba745c25/)
 
@@ -52,8 +52,6 @@ Correr `ng build` para hacer un build del proyecto. Los articafts se guardarán 
 ## Documentación oficial del framework
 
 [Enlace](https://angular.io/cli)
-
-
 
 ## Contacto
 sebastiancapotondo@gmail.com
