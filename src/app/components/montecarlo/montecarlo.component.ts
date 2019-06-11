@@ -34,6 +34,7 @@ export class MontecarloComponent implements OnInit {
 
   greenDots = [];
   redDots = [];
+  dotsToRestIfNegativeY: number;
 
   userFunction: string;
   mathFunction: any;
@@ -69,6 +70,7 @@ export class MontecarloComponent implements OnInit {
     this.cLimit = 0;
     this.greenDots = [];
     this.redDots = [];
+    this.dotsToRestIfNegativeY = 0;
 
     this.rectanglesResult = 0;
     this.trapezoidResult = 0;
@@ -239,7 +241,16 @@ export class MontecarloComponent implements OnInit {
   generateDot(x: number, y: number) {
     const yValueAtX = this.graphPoints[x];
 
-    (yValueAtX < y) ? this.addRedDot(x, y) : this.addGreenDot(x, y);
+    if(yValueAtX < 0){
+      if(yValueAtX < y && y > 0) {
+        this.addRedDot(x, y)
+      } else {
+        this.addGreenDot(x, y);
+        this.dotsToRestIfNegativeY ++;
+      }
+    } else {
+      (yValueAtX < y) ? this.addRedDot(x, y) : this.addGreenDot(x, y);
+    }
   }
 
   addGreenDot(xValue: number, yValue: number) {
@@ -300,7 +311,7 @@ export class MontecarloComponent implements OnInit {
 
   calculateIntegralValue() {
     const n = this.amountOfDots;
-    const greenDots = this.greenDots.length;
+    const greenDots = this.greenDots.length - this.dotsToRestIfNegativeY;
 
     if (this.amountOfDots > 0) {
       this.montecarloResult = (greenDots / n) * (this.bLimit - this.aLimit) * this.cLimit;
