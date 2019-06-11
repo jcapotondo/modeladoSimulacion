@@ -3,7 +3,6 @@ import { Chart } from 'chart.js';
 import * as math from 'mathjs';
 import * as _ from 'lodash';
 import {UIContext} from '../../ui.context';
-import {debug} from 'util';
 
 @Component({
   selector: 'montecarlo',
@@ -51,7 +50,6 @@ export class MontecarloComponent implements OnInit {
     this.parseFunction();
 
     this.calculateRectangles();
-    this.calculateTrapezoids();
     this.findGraphicPoints();
 
     this.drawGraph();
@@ -93,23 +91,6 @@ export class MontecarloComponent implements OnInit {
     }
 
     this.rectanglesResult = calculatedValue * h;
-  }
-
-  calculateTrapezoids() {
-    const h = (this.bLimit - this.aLimit) / this.amountOfPoints;
-
-    let calculatedValue = 0;
-
-    for (let k = 0; k <= this.amountOfPoints - 1; k++) {
-      const xk = this.aLimit + k * h;
-
-      calculatedValue +=  this.mathFunction.eval({x: xk});
-    }
-
-    const functionOnA = this.mathFunction.eval( {x : this.aLimit} );
-    const functionOnB = this.mathFunction.eval( {x : this.bLimit} );
-
-    this.trapezoidResult = (h / 2) * (functionOnA + functionOnB + (2 * calculatedValue));
   }
 
   findGraphicPoints() {

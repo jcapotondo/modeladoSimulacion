@@ -112,14 +112,14 @@ export class EulerComponent implements OnInit {
               display: true,
               labelString: 'Eje t'
             },
-          } ],
+          }],
           yAxes: [ {
             display: true,
             scaleLabel: {
               display: true,
               labelString: 'Eje x'
-            }
-          } ]
+            },
+          }]
         }
       }
     });
@@ -151,6 +151,7 @@ export class EulerComponent implements OnInit {
         });  
       }      
     });
+
     return points;
   }
 }

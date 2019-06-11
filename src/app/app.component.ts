@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UIContext } from './ui.context';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +8,11 @@ import { UIContext } from './ui.context';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  constructor(public uiContext: UIContext) { }
+
+  constructor(public uiContext: UIContext,
+              router:Router) {
+    router.navigate(['/euler']);
+  }
 
   ngOnInit() {
   }
