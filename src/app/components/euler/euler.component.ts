@@ -11,8 +11,8 @@ import * as math from 'mathjs';
 export class EulerComponent implements OnInit {
   eulerChart: Chart;
 
-  eulerPoints: any[];
-  eulerImprovedPoints: any[];
+  eulerPoints: number[];
+  eulerImprovedPoints: number[];
 
   userFunction: string;
   mathFunctionParser: any;
@@ -53,47 +53,44 @@ export class EulerComponent implements OnInit {
     this.eulerImprovedMethod();
   }
 
-  addEulerPoint(t, x) { this.eulerPoints.push({t, x}); }
+  addEulerPoint(t, x) { this.eulerPoints[t] = x; }
 
   eulerMethod() {
+    this.addEulerPoint(this.aValue, this.x0Value);
     const a = this.aValue;
     const h = this.hValue;
     const n = this.nValue;
-    const x0 = this.x0Value;
-    this.addEulerPoint(a, x0);
-
-    for ( let t = a + h, k = 0; t <= n * h + a; t += h, k ++ ) {
-      const prev = this.eulerPoints[k];
-      this.addEulerPoint(
-        t,
-        prev.x + (h * this.mathFunctionParser.eval(`f(${prev.t}, ${prev.x})`))
-      );
+    for ( let t = a + h, k = a; t <= n * h + a; t += h, k += h ) {
+        this.addEulerPoint(
+          t,
+          this.eulerPoints[k] + (h * this.mathFunctionParser.eval(`f(${k}, ${this.eulerPoints[k]})`))
+        );
     }
   }
 
-  addEulerImprovedPoint(t, x) { this.eulerImprovedPoints.push({t, x}); }
+  addEulerImprovedPoint(t, x) { this.eulerImprovedPoints[t] = x; }
 
   eulerImprovedMethod() {
+    this.addEulerPoint(this.aValue, this.x0Value);
     const a = this.aValue;
     const h = this.hValue;
     const n = this.nValue;
-    const x0 = this.x0Value;
-    this.addEulerImprovedPoint(a, x0);
 
-    for ( let t = a + h, k = a; t <= n * h + a; t += h, k ++ ) {
-      const previousValue = this.eulerImprovedPoints[k];
+    for ( let t = a + h, k = a; t <= n * h + a; t += h, k += h) {
+        const previousTvalue = k;
+        const previousXvalue = this.eulerPoints[k];
 
-      const predictor = previousValue.x + h * this.mathFunctionParser.eval(`f(${previousValue.t}, ${previousValue.x})`);
-      const corrector =
-        previousValue.x +
-            h * 0.5 * (this.mathFunctionParser.eval(`f(${previousValue.t}, ${previousValue.x})`)) +
-            this.mathFunctionParser.eval(`f(${t}, ${predictor})`);
+        const predictor = previousXvalue + h * this.mathFunctionParser.eval(`f(${previousTvalue}, ${previousXvalue})`);
+        const corrector =
+              previousXvalue +
+              h * 0.5 * (this.mathFunctionParser.eval(`f(${previousTvalue}, ${previousXvalue})`) +
+              this.mathFunctionParser.eval(`f(${t}, ${predictor})`));
 
 
-      this.addEulerImprovedPoint(
-        t,
-        corrector
-      );
+        this.addEulerImprovedPoint(
+          t, 
+          corrector
+        );
     }
   }
 
@@ -146,13 +143,13 @@ export class EulerComponent implements OnInit {
 
   generateGraphPoints(map) {
     const points = [];
-    map.forEach((val) =>  {
-      if (val.t <= this.bValue) {
+    map.forEach((value, index) =>  {
+      if(index <= this.bValue) {
         points.push({
-          x: val.t,
-          y: val.x
-        });
-      }
+          x: index,
+          y: value
+        });  
+      }      
     });
     return points;
   }
