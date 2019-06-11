@@ -20,7 +20,7 @@ export class EulerComponent implements OnInit {
   nValue = 0;
   aValue: number;
   bValue: number;
-  hValue: number;
+  hValue: number; //    (b - a) / (n - 1)
   x0Value: number;
 
   constructor(public uiContext: UIContext) { }
@@ -31,6 +31,7 @@ export class EulerComponent implements OnInit {
 
   execute() {
     this.reset();
+    this.calculateHvalue();
     this.parseFunction();
     this.findGraphicPoints();
     this.drawEulerGraph();
@@ -40,6 +41,10 @@ export class EulerComponent implements OnInit {
     this.eulerChart = new Chart('eulerCanvas', {type: 'line', data: {}});
     this.eulerPoints = [];
     this.eulerImprovedPoints = [];
+  }
+
+  calculateHvalue() {
+    this.hValue = (this.bValue - this.aValue)/(this.nValue)
   }
 
   parseFunction() {
@@ -71,7 +76,7 @@ export class EulerComponent implements OnInit {
   addEulerImprovedPoint(t, x) { this.eulerImprovedPoints[t] = x; }
 
   eulerImprovedMethod() {
-    this.addEulerPoint(this.aValue, this.x0Value);
+    this.addEulerImprovedPoint(this.aValue, this.x0Value);
     const a = this.aValue;
     const h = this.hValue;
     const n = this.nValue;
